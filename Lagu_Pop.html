@@ -1,0 +1,248 @@
+<!DOCTYPE html>
+<html lang="id">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Lagu Pop</title>
+    <style>
+      body {
+        font-family: "Montserrat", sans-serif;
+        text-align: center;
+        margin: 20px;
+        background: url("back.jpg") no-repeat center center fixed;
+        background-size: cover;
+        color: #fff;
+      }
+
+      header {
+        display: flex;
+        padding: 3px;
+        border-radius: 8px;
+        border: 2px solid whitesmoke;
+      }
+
+      header img {
+        width: 150px;
+        height: auto;
+      }
+
+      #search {
+        padding: 8px;
+        border: none;
+        margin-right: 10px;
+        border-radius: 8px;
+      }
+
+      .song-container {
+        display: flex;
+        justify-content: space-around;
+        flex-wrap: wrap;
+        margin-bottom: 20px;
+        padding: 10px;
+      }
+
+      .song {
+        text-align: center;
+        margin: 10px;
+        cursor: pointer;
+        position: relative;
+      }
+
+      .song img {
+        width: 200px;
+        height: 200px;
+        object-fit: cover;
+        border-radius: 10px;
+        border: 2px solid whitesmoke;
+      }
+
+      .audio-player {
+        width: 100%;
+        margin-top: 10px;
+      }
+
+      #player {
+        text-align: center;
+        margin: 20px;
+        display: none;
+      }
+
+      .nextButton {
+        padding: 8px 16px;
+        background-color: green;
+        color: white;
+        border: none;
+        cursor: pointer;
+        border-radius: 5px;
+        margin-top: 10px;
+      }
+      #backButton {
+        padding: 8px 16px;
+        background-color: green;
+        color: white;
+        border: none;
+        cursor: pointer;
+        border-radius: 5px;
+        margin-top: 10px;
+      }
+      #selectedImage {
+        width: 300px;
+        height: 300px;
+        border-radius: 10px;
+      }
+
+      #selectedTitle {
+        margin-top: 10px;
+        font-size: 1.2em;
+      }
+
+      #artistName {
+        color: #ddd;
+        margin-top: 5px;
+      }
+
+      .hidden {
+        display: none;
+      }
+
+      footer {
+        text-align: center;
+        color: #fff;
+        padding: 5px;
+      }
+    </style>
+  </head>
+
+  <body>
+    <header>
+      <img src="logo1.png" alt="" />
+    </header>
+    <div
+      style="display: flex; justify-content: start; display: none"
+      id="btn-tampil-semua-lagu"
+    >
+      <button id="backButton" onclick="showAllSongs()">Back</button>
+    </div>
+
+    <div class="container">
+      <div class="song-container" id="songContainer"></div>
+
+      <div id="player" class="hidden">
+        <div class="song-info">
+          <img id="selectedImage" alt="" />
+          <p id="selectedTitle"></p>
+          <p id="artistName"></p>
+        </div>
+        <audio id="audioPlayer" class="audio-player" controls></audio>
+        <br />
+
+        <button class="nextButton" onclick="previousSong()">Prev</button>
+        <button class="nextButton" onclick="nextSong()">Next</button>
+      </div>
+    </div>
+
+    <script>
+      var audioPlayer = document.getElementById("audioPlayer");
+      var currentSongIndex = 0;
+
+      var songs = [
+        {
+          title: "Nanti Kita Seperti Ini",
+          artist: "Batas Senja",
+          image: "Batas_senja.jpg",
+          audio: "Batas Senja - Nanti Kita Seperti Ini.m4a",
+        },
+        {
+          title: "Surat Hati",
+          artist: "Devano",
+          image: "Devano_surat Hati.jpeg",
+          audio: "Devano - Surat Hati.m4a",
+        },
+        {
+          title: "Satu-Satu",
+          artist: "Idgitaf",
+          image: "Idgitaf.jpg",
+          audio: "Idgitaf - Satu-Satu.m4a",
+        },
+        {
+          title: "Suara Kayu Feat",
+          artist: "Kembali Pulang",
+          image: "kembali_pulang.jpg",
+          audio: "Kembali Pulang - Suara Kayu Feat.m4a",
+        },
+      ];
+
+      songs.sort((a, b) => a.title.localeCompare(b.title));
+
+      var songContainer = document.getElementById("songContainer");
+      var playerDiv = document.getElementById("player");
+      var selectedImage = document.getElementById("selectedImage");
+      var selectedTitle = document.getElementById("selectedTitle");
+      var artistName = document.getElementById("artistName");
+
+      function displaySongs(songsToDisplay) {
+        songContainer.innerHTML = songsToDisplay
+          .map(
+            (song, index) => `
+              <div class="song" onclick="showSingleSong(${index})">
+                <img src="${song.image}" alt="${song.title}" />
+                <p><b>${song.title}</b></p>
+                <p>${song.artist}</p>
+              </div>
+            `
+          )
+          .join("");
+      }
+
+      function showSingleSong(index) {
+        document.getElementById("btn-tampil-semua-lagu").style.display = "flex";
+
+        hideAllSongs();
+        audioPlayer.src = songs[index].audio;
+        audioPlayer.play();
+        currentSongIndex = index;
+
+        selectedImage.src = songs[index].image;
+        selectedTitle.textContent = songs[index].title;
+        artistName.textContent = songs[index].artist;
+
+        playerDiv.style.display = "block";
+      }
+      var audioPlayer = document.getElementById("audioPlayer");
+      var currentSongIndex = 0;
+
+      function previousSong() {
+        currentSongIndex = (currentSongIndex - 1 + songs.length) % songs.length;
+
+        showSingleSong(currentSongIndex);
+      }
+
+      function nextSong() {
+        currentSongIndex = (currentSongIndex + 1) % songs.length;
+
+        showSingleSong(currentSongIndex);
+      }
+
+      function hideAllSongs() {
+        document.querySelectorAll(".song").forEach((songElement) => {
+          songElement.classList.add("hidden");
+        });
+      }
+
+      function showAllSongs() {
+        document.getElementById("btn-tampil-semua-lagu").style.display = "none";
+
+        playerDiv.style.display = "none";
+        document.querySelectorAll(".song").forEach((songElement) => {
+          songElement.classList.remove("hidden");
+        });
+      }
+
+      displaySongs(songs);
+    </script>
+
+    <footer>
+      <p><b>@RetroMusic 2023</b></p>
+    </footer>
+  </body>
+</html>
